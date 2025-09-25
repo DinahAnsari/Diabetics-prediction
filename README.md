@@ -27,6 +27,7 @@ python -m streamlit run project.py
 - Train and evaluate a selected model (SVM, KNN, AdaBoost) with tunable hyperparameters.
 - Display metrics (Accuracy, Sensitivity, Specificity), a Confusion Matrix, ROC Curve (when probabilities are available), and AdaBoost Feature Importance.
 - Allow manual entry of patient measurements to get an instant prediction with probability.
+- Compare SVM, KNN, and AdaBoost side-by-side in a grouped bar chart of Accuracy, Sensitivity, and Specificity.
 
 
 ## Sidebar controls (left panel)
@@ -73,6 +74,11 @@ python -m streamlit run project.py
 ### AdaBoost Feature Importance
 - Bar chart of feature importances learned by AdaBoost (with decision stump base learners).
 - Higher bars indicate features that contributed more to the model’s decisions.
+
+### Model Comparison (SVM vs KNN vs AdaBoost)
+- After training, the app shows a grouped bar chart comparing the three models on the same test split.
+- Bars display: **Accuracy**, **Sensitivity**, **Specificity** per model.
+- Uses the current preprocessing and sidebar hyperparameters. Adjust settings and re-train to update the chart.
 
 ### Manual Prediction (single patient)
 - After training a model, a form appears to input:

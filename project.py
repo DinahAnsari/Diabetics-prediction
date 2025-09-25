@@ -235,6 +235,40 @@ def main():
             st.session_state["trained_features"] = feature_cols
             st.session_state["feature_bounds"] = df_clean[feature_cols].describe()
 
+            # --- Model Comparison (SVM, KNN, AdaBoost) ---
+            st.subheader("Model Comparison: Accuracy, Sensitivity, Specificity")
+            comparison_results = []
+
+            models_to_compare = [
+                ("SVM", SVC(C=svm_c, kernel=svm_kernel, probability=True, random_state=42)),
+                ("KNN", KNeighborsClassifier(n_neighbors=knn_k, weights=knn_weights)),
+                ("AdaBoost", AdaBoostClassifier(estimator=DecisionTreeClassifier(max_depth=1, random_state=42),
+                                                n_estimators=ada_estimators,
+                                                learning_rate=ada_lr,
+                                                random_state=42)),
+            ]
+
+            for name, clf in models_to_compare:
+                clf.fit(X_train, y_train)
+                y_pred_cmp = clf.predict(X_test)
+                acc, sen, spe, _ = compute_metrics(y_test, y_pred_cmp)
+                comparison_results.append({
+                    "Model": name,
+                    "Accuracy": acc,
+                    "Sensitivity": sen,
+                    "Specificity": spe,
+                })
+
+            cmp_df = pd.DataFrame(comparison_results)
+            cmp_df = cmp_df.set_index("Model")["Accuracy Sensitivity Specificity".split()]
+
+            fig_cmp, ax_cmp = plt.subplots(figsize=(7.5, 4.2))
+            cmp_df.plot(kind="bar", ax=ax_cmp, rot=0, ylim=(0, 1))
+            ax_cmp.set_ylabel("Score")
+            ax_cmp.set_title("Model Comparison on Test Set")
+            ax_cmp.legend(loc="lower right")
+            st.pyplot(fig_cmp, clear_figure=True)
+
     st.markdown("---")
     st.subheader("Manual Prediction")
     if "trained_model" not in st.session_state:
